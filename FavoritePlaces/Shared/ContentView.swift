@@ -20,11 +20,28 @@ struct ContentView: View {
         NavigationView {
             List {
                 ForEach(places) { place in
-        
-                    NavigationLink(destination: Detail(place: place), label: {
-                        Text(place.name ?? "NO NAME")
-                    } )
-                    
+                    HStack{
+                        if place.imageLink != "" , let c = place.imageLink{
+                            AsyncImage(url: URL(string:c), content: { image in
+                                
+                                image.resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(maxWidth: 40, maxHeight: 40)
+                                    
+                            }, placeholder: {
+                                ProgressView()
+                            })
+                               
+                        }else{
+                            Image("image")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: 40, maxHeight: 40)
+                        }
+                        NavigationLink(destination: Detail(place: place), label: {
+                            Text(place.name ?? "NO NAME")
+                        } )
+                    }
                     
                 }
                 .onDelete(perform: deleteItems)
