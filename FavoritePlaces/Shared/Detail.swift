@@ -41,6 +41,9 @@ struct Detail: View {
                         })
                     }
                     Text(place.imageDetail ?? "")
+                                    NavigationLink(destination: MapView(place: place), label: {
+                                        Text("Map of \(place.name ?? "")")
+                                    })
                     Text("Latitude: \(String(place.latitude ))")
                     Text("Longtitude: \(String(place.longtitude))").onDisappear{
                         try?  viewContext.save()

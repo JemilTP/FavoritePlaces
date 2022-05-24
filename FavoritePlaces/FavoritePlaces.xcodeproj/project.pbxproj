@@ -23,6 +23,7 @@
 		CF70358E283A1D9F00C860ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF70355F283A1D9E00C860ED /* Assets.xcassets */; };
 		CF70359E283A442700C860ED /* Detail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70359D283A442600C860ED /* Detail.swift */; };
 		CF70359F283A442700C860ED /* Detail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70359D283A442600C860ED /* Detail.swift */; };
+		CF85FB9B283D24120016FDBA /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF85FB9A283D24120016FDBA /* MapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		CF703581283A1D9F00C860ED /* Tests_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOS.swift; sourceTree = "<group>"; };
 		CF703583283A1D9F00C860ED /* Tests_macOSLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOSLaunchTests.swift; sourceTree = "<group>"; };
 		CF70359D283A442600C860ED /* Detail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Detail.swift; sourceTree = "<group>"; };
+		CF85FB9A283D24120016FDBA /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 		CF703554283A1D9700C860ED = {
 			isa = PBXGroup;
 			children = (
+				CF85FB9A283D24120016FDBA /* MapView.swift */,
 				CF703559283A1D9700C860ED /* Shared */,
 				CF70356B283A1D9F00C860ED /* macOS */,
 				CF703574283A1D9F00C860ED /* Tests iOS */,
@@ -312,6 +315,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF703585283A1D9F00C860ED /* FavoritePlaces.xcdatamodeld in Sources */,
+				CF85FB9B283D24120016FDBA /* MapView.swift in Sources */,
 				CF70359E283A442700C860ED /* Detail.swift in Sources */,
 				CF70358B283A1D9F00C860ED /* Persistence.swift in Sources */,
 				CF703587283A1D9F00C860ED /* FavoritePlacesApp.swift in Sources */,
