@@ -46,12 +46,7 @@ struct ContentView: View {
                 }
                 .onDelete(perform: deleteItems)
             }
-            .onAppear{
-                print("_______________________")
-                print()
-                print(type(of: places.first!))
-                print(places.first!)
-            }
+            
             .navigationBarTitle("Favorite Places")
             .toolbar {
 #if os(iOS)

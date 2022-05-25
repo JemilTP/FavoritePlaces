@@ -7,7 +7,7 @@
 
 import SwiftUI
 import CoreData
-
+import MapKit
 struct Detail: View {
     /*
     @State var name : String
@@ -22,7 +22,7 @@ struct Detail: View {
     private var places: FetchedResults<Place>
     @State var place: Place
     @State var mode: EditMode = .inactive
-    
+    @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
   
     
     var body: some View {
@@ -41,9 +41,13 @@ struct Detail: View {
                         })
                     }
                     Text(place.imageDetail ?? "")
-                                    NavigationLink(destination: MapView(place: place), label: {
+                                    HStack{
+                                        Map(coordinateRegion: $region).frame(maxWidth: 40, maxHeight: 40)
+                                            .scaledToFit()
+                                    NavigationLink(destination: MapView(place: place, latitude: place.latitude, longtitude: place.longtitude), label: {
                                         Text("Map of \(place.name ?? "")")
                                     })
+                                    }
                     Text("Latitude: \(String(place.latitude ))")
                     Text("Longtitude: \(String(place.longtitude))").onDisappear{
                         try?  viewContext.save()
@@ -86,6 +90,9 @@ struct Detail: View {
                 ToolbarItem(placement:. navigationBarTrailing){
                     EditButton()
                 }
+            }
+            .onAppear{
+                region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longtitude), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
             }
     .environment(\.editMode, $mode) //attach var mode to edit mode of the environment
     }
