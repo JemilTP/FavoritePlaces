@@ -8,14 +8,9 @@
 import SwiftUI
 import CoreData
 import MapKit
+
 struct Detail: View {
-    /*
-    @State var name : String
-    @State var imageLink : String
-    @State var details : String
-    @State var latitude : Double
-    @State var longtitude : Double
-    */
+
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
         sortDescriptors: [])
@@ -34,7 +29,7 @@ struct Detail: View {
                             image in
                             image.resizable()
                                 .aspectRatio(contentMode: .fit)
-                                //.frame(maxWidth: 40, maxHeight: 40)
+                             
                         }, placeholder: {
                             ProgressView()
                             
@@ -44,6 +39,7 @@ struct Detail: View {
                                     HStack{
                                         Map(coordinateRegion: $region).frame(maxWidth: 40, maxHeight: 40)
                                             .scaledToFit()
+                                        
                                     NavigationLink(destination: MapView(place: place, latitude: place.latitude, longtitude: place.longtitude), label: {
                                         Text("Map of \(place.name ?? "")")
                                     })
@@ -59,10 +55,7 @@ struct Detail: View {
                         TextField("Name", text: Binding($place.name)!)
                     }
                     HStack{
-                        /*Button("Clear"){
-                            place.imageLink = ""
-                        }.foregroundColor(Color.blue)*/
-                        
+                 
                         Text("Image URL: ")
                         TextField("URL", text:Binding($place.imageLink)!)
                     }

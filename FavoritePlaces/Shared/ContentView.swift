@@ -68,7 +68,7 @@ struct ContentView: View {
     private func addItem() {
         withAnimation {
             let newPlace = Place(context: viewContext)
-           // newItem.timestamp = Date()
+    
             newPlace.name = "New Place"
             newPlace.imageDetail = ""
             newPlace.imageLink = ""
