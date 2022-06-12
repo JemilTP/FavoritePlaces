@@ -7,11 +7,21 @@
 
 import SwiftUI
 import MapKit
-
+import CoreLocation
 struct Location: Identifiable{
     let id = UUID()
         let name: String
         var coordinate: CLLocationCoordinate2D
+}
+
+func getCoordinateFrom(address: String, completion: @escaping(_ coordinate: CLLocationCoordinate2D?, _ error: Error?) -> () ) {
+   CLGeocoder().geocodeAddressString(address) { completion($0?.first?.location?.coordinate, $1) }
+   
+}
+extension CLLocation {
+    func fetchCityAndCountry(completion: @escaping (_ city: String?, _ country:  String?, _ error: Error?) -> ()) {
+        CLGeocoder().reverseGeocodeLocation(self) { completion($0?.first?.locality, $0?.first?.country, $1) }
+    }
 }
 
 struct MapView: View {
@@ -26,6 +36,8 @@ struct MapView: View {
     @State var x: Double = 0.0
     @State var y: Double = 0.0
     @State var isEdit: Bool = false
+    @State var mode: EditMode = .inactive
+    @State var placeName: String = ""
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     var btnBack : some View { Button(action: {
@@ -45,6 +57,26 @@ struct MapView: View {
     
     var body: some View {
         VStack{
+            if mode == .active{
+                TextField("Place", text: $placeName).onSubmit{
+                    if placeName != ""{
+                    getCoordinateFrom(address: placeName) { coordinate, error in
+                        guard let coordinate = coordinate, error == nil else { return }
+                        region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
+
+                    }
+                    }
+                }
+                Button("Update from Map"){
+                    let location = CLLocation(latitude: region.center.latitude, longitude: region.center.longitude)
+                    location.fetchCityAndCountry { city, country, error in
+                        guard let city = city, let country = country, error == nil else { return }
+                        placeName = "\(city), \(country)"
+                        
+                    }
+                }
+            }
+          
             Map(coordinateRegion: $region
                 ,annotationItems: locations){
                 
@@ -82,6 +114,12 @@ struct MapView: View {
 
             
         }
+        .toolbar{
+            ToolbarItem(placement:. navigationBarTrailing){
+                EditButton()
+            }
+        }
+        .environment(\.editMode, $mode) //attach var mode to edit mode of the environment
         .onReceive(timer){
             time in
           
@@ -97,15 +135,18 @@ struct MapView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .navigationBarItems(leading: btnBack)
         .navigationBarBackButtonHidden(true)
-        .navigationBarTitle(String(place.name ?? ""))
+        .navigationBarTitle(placeName)
             .padding(.leading)
             .padding(.trailing)
             .onAppear{
+                placeName = place.name ?? ""
                 region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: latitude, longitude: longtitude), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
              
                 location.coordinate = CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longtitude)
                 locations = [location]
-          
+            }
+            .onDisappear{
+                place.name = placeName
             }
             }
     }

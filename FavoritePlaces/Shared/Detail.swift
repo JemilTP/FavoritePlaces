@@ -8,6 +8,9 @@
 import SwiftUI
 import CoreData
 import MapKit
+import Solar
+
+
 
 struct Detail: View {
 
@@ -18,8 +21,9 @@ struct Detail: View {
     @State var place: Place
     @State var mode: EditMode = .inactive
     @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
-  
-    
+    @State var sunrise: Date = Date.now
+    @State var sunset: Date = Date.now
+    //var solar: Solar
     var body: some View {
         VStack{
             VStack{
@@ -48,7 +52,14 @@ struct Detail: View {
                     Text("Longtitude: \(String(place.longtitude))").onDisappear{
                         try?  viewContext.save()
                     }
-                                   
+                                    Spacer()
+                                    HStack{
+                                        Text("Sunrise: \(sunrise)")
+                                            .padding(.leading)
+                                        Spacer()
+                                        Text("Sunset: \(sunset)")
+                                            .padding(.trailing)
+                                    }
                 }else{
                     HStack{
                         Text("Name: ")
@@ -86,6 +97,15 @@ struct Detail: View {
             }
             .onAppear{
                 region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longtitude), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
+                
+               
+                let solar = Solar(for: Date.now, coordinate: CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longtitude))
+             
+                sunrise = solar?.sunrise ?? Date.now
+             
+                
+                sunset = solar?.sunset ?? Date.now
+             
             }
     .environment(\.editMode, $mode) //attach var mode to edit mode of the environment
     }
