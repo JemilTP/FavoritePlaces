@@ -30,9 +30,9 @@ struct MapView: View {
     @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
     @State var latitude: Double 
     @State var longtitude: Double
-    @State var location: Location = Location(name: "", coordinate: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0))
-    @State var locations: [Location] = []
-    var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+   // @State var location: Location = Location(name: "", coordinate: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0))
+   // @State var locations: [Location] = []
+    var timer = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
     @State var x: Double = 0.0
     @State var y: Double = 0.0
     @State var isEdit: Bool = false
@@ -64,6 +64,15 @@ struct MapView: View {
                         guard let coordinate = coordinate, error == nil else { return }
                         region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
 
+                    print(type(of: coordinate))
+                    
+                    
+                        let l = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+                    l.fetchCityAndCountry { city, country, error in
+                        guard let city = city, let country = country, error == nil else { return }
+                        placeName = "\(city), \(country)"
+                        
+                    }
                     }
                     }
                 }
@@ -77,16 +86,7 @@ struct MapView: View {
                 }
             }
           
-            Map(coordinateRegion: $region
-                ,annotationItems: locations){
-                
-                location in
-                MapAnnotation(coordinate: location.coordinate){
-                    Circle()
-                        .fill(.red)
-                        
-                }
-            }
+            Map(coordinateRegion: $region)
           
                 HStack{
                     
@@ -94,8 +94,7 @@ struct MapView: View {
                   
                     TextField("", value: $latitude, format: .number).onSubmit{
                         region.center.latitude = latitude
-                       
-                        locations[0].coordinate = CLLocationCoordinate2D(latitude: region.center.latitude, longitude: region.center.longitude)
+            
                         isEdit.toggle()
                     }
                 }
@@ -106,8 +105,6 @@ struct MapView: View {
                       
                         region.center.longitude = longtitude
                    
-                        locations[0].coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longtitude)
-                     
                     }
                 
                 }
@@ -141,9 +138,7 @@ struct MapView: View {
             .onAppear{
                 placeName = place.name ?? ""
                 region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: latitude, longitude: longtitude), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
-             
-                location.coordinate = CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longtitude)
-                locations = [location]
+            
             }
             .onDisappear{
                 place.name = placeName
