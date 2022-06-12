@@ -8,19 +8,24 @@
 import SwiftUI
 import CoreData
 
+
+/// Structure View for the view that shows the list of places (nav links)
 struct ContentView: View {
+    ///Fetches the data
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
         sortDescriptors: [])
     private var places: FetchedResults<Place>
+    ///if a nav link for a place is clicked
     @State var toDetail: Bool = false
-   // @State var viewPlace =  Place(context: viewContext)
+   ///body view
     var body: some View {
         
         NavigationView {
             List {
                 ForEach(places) { place in
                     HStack{
+                        ///if image link is not empty , also unwraps value
                         if place.imageLink != "" , let c = place.imageLink{
                             AsyncImage(url: URL(string:c), content: { image in
                                 
@@ -32,7 +37,7 @@ struct ContentView: View {
                                 ProgressView()
                             })
                                
-                        }else{
+                        }else{ ///if no image link, defualt image icon
                             Image("image")
                                 .resizable()
                                 .scaledToFit()
@@ -46,14 +51,14 @@ struct ContentView: View {
                 }
                 .onDelete(perform: deleteItems)
             }
-            
+            ///Nav bar items
             .navigationBarTitle("Favorite Places")
             .toolbar {
-#if os(iOS)
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditButton()
                 }
-#endif
+
                 ToolbarItem (placement: .navigationBarLeading){
                     Button(action: addItem) {
                         Label("Add Item", systemImage: "plus")
@@ -64,27 +69,29 @@ struct ContentView: View {
         }
        
     }
-
+    
+    /// adds a new place
     private func addItem() {
         withAnimation {
             let newPlace = Place(context: viewContext)
-    
+            ///deault values
             newPlace.name = "New Place"
             newPlace.imageDetail = ""
             newPlace.imageLink = ""
             newPlace.latitude = 0.0
             newPlace.longtitude = 0.0
             do {
-                try viewContext.save()
+                try viewContext.save() ///saves to core data
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+               
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }
-
+    
+    /// delates places
+   
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             offsets.map { places[$0] }.forEach(viewContext.delete)
@@ -92,8 +99,7 @@ struct ContentView: View {
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+               
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
@@ -101,16 +107,4 @@ struct ContentView: View {
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-/*
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-    }
-}
-*/
+
